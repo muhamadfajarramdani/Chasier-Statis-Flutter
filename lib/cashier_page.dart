@@ -9,39 +9,71 @@ class CashierPage extends StatefulWidget {
 }
 
 class _CashierPageState extends State<CashierPage> {
-  List<Map<String, dynamic>> products = [
-    {
-      "image": "assets/images/cokelatsusu.jpg",
-      "name": "Adidas Shoes",
-      "price": 30000,
-      "stock": 10,
-      "quantity": 0,
-    },
-    {
-      "image": "assets/images/kopihitam.jpg",
-      "name": "Border Figure Noel/Liam Gallagher",
-      "price": 15000,
-      "stock": 15,
-      "quantity": 0,
-    },
-    {
-      "image": "assets/images/rotibakar.jpg",
-      "name": "Dickies/Carhartt Pants",
-      "price": 10000,
-      "stock": 6,
-      "quantity": 0,
-    },
-    {
-      "image": "assets/images/cokelatsusu.jpg",
-      "name": "Jersey Beckham",
-      "price": 5000,
-      "stock": 1,
-      "quantity": 0,
-    },
-  ];
+  late List<Map<String, dynamic>> allProducts;
+  late List<Map<String, dynamic>> products;
 
   int _totalItem = 0;
   int _totalHarga = 0;
+
+  final TextEditingController searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    allProducts = [
+      {
+        "image": "assets/images/cokelatsusu.jpg",
+        "name": "Adidas Shoes",
+        "price": 30000,
+        "stock": 10,
+        "quantity": 0,
+      },
+      {
+        "image": "assets/images/kopihitam.jpg",
+        "name": "Border Figure Noel/Liam Gallagher",
+        "price": 15000,
+        "stock": 15,
+        "quantity": 0,
+      },
+      {
+        "image": "assets/images/rotibakar.jpg",
+        "name": "Dickies/Carhartt Pants",
+        "price": 10000,
+        "stock": 6,
+        "quantity": 0,
+      },
+      {
+        "image": "assets/images/cokelatsusu.jpg",
+        "name": "Jersey Beckham",
+        "price": 5000,
+        "stock": 1,
+        "quantity": 0,
+      },
+    ];
+    products = List<Map<String, dynamic>>.from(allProducts);
+    searchController.addListener(_onSearchChanged);
+  }
+
+  @override
+  void dispose() {
+    searchController.removeListener(_onSearchChanged);
+    searchController.dispose();
+    super.dispose();
+  }
+
+  void _onSearchChanged() {
+    String query = searchController.text.toLowerCase();
+    setState(() {
+      if (query.isEmpty) {
+        products = List<Map<String, dynamic>>.from(allProducts);
+      } else {
+        products = allProducts
+            .where((product) =>
+                product['name'].toString().toLowerCase().contains(query))
+            .toList();
+      }
+    });
+  }
 
   Future<void> _TambahItemBeli(int index) async {
     setState(() {
@@ -175,8 +207,6 @@ class _CashierPageState extends State<CashierPage> {
       },
     );
   }
-
-  final TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
